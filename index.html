@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일용근로 계산기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --google-blue: #1a73e8;
+            --google-blue-hover: #1765cc;
+            --google-blue-light: #e8f0fe;
+            --google-red: #d93025;
+            --google-green: #1e8e3e;
+            --google-gray-50: #f8f9fa;
+            --google-gray-100: #f1f3f4;
+            --google-gray-200: #e8eaed;
+            --google-gray-300: #dadce0;
+            --google-gray-500: #9aa0a6;
+            --google-gray-700: #5f6368;
+            --google-gray-900: #202124;
+            --border-radius: 8px;
+            --shadow-1: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+            --shadow-2: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans KR', Arial, sans-serif;
+            background: var(--google-gray-50);
+            color: var(--google-gray-900);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            background: white;
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--google-gray-200);
+            box-shadow: var(--shadow-1);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--google-gray-900);
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--google-gray-700);
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .calc-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--shadow-1);
+            border: 1px solid var(--google-gray-200);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .calc-card:hover {
+            box-shadow: var(--shadow-2);
+        }
+
+        .calc-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--google-gray-900);
+            font-weight: 500;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--google-gray-200);
+            letter-spacing: -0.3px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--google-gray-700);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-group .helper-text {
+            font-size: 12px;
+            color: var(--google-gray-500);
+            margin-top: 6px;
+        }
+
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            background: white;
+            border: 1px solid var(--google-gray-300);
+            border-radius: var(--border-radius);
+            color: var(--google-gray-900);
+            font-size: 14px;
+            font-family: 'Roboto', 'Noto Sans KR', Arial, sans-serif;
+            transition: all 0.15s ease;
+        }
+
+        input[type="number"]:hover,
+        input[type="date"]:hover,
+        input[type="time"]:hover,
+        select:hover {
+            border-color: var(--google-gray-500);
+        }
+
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--google-blue);
+            box-shadow: 0 0 0 2px var(--google-blue-light);
+        }
+
+        .calc-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: var(--google-blue);
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Roboto', 'Noto Sans KR', Arial, sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+            letter-spacing: 0.25px;
+        }
+
+        .calc-btn:hover {
+            background: var(--google-blue-hover);
+            box-shadow: var(--shadow-1);
+        }
+
+        .calc-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-box {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--google-gray-50);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--google-gray-200);
+        }
+
+        .result-title {
+            font-size: 12px;
+            color: var(--google-gray-700);
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-value {
+            font-size: 32px;
+            color: var(--google-blue);
+            font-weight: 400;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .result-detail {
+            font-size: 14px;
+            color: var(--google-gray-900);
+            line-height: 1.6;
+        }
+
+        .result-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--google-gray-200);
+        }
+
+        .result-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-detail-label {
+            color: var(--google-gray-700);
+            font-size: 14px;
+        }
+
+        .result-detail-value {
+            font-weight: 500;
+            color: var(--google-gray-900);
+            text-align: right;
+        }
+
+        .info-box {
+            background: var(--google-blue-light);
+            padding: 16px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+            border-left: 4px solid var(--google-blue);
+        }
+
+        .info-box .info-title {
+            font-weight: 500;
+            color: var(--google-gray-900);
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 6px 0;
+            color: var(--google-gray-700);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .info-box li::before {
+            content: '•';
+            color: var(--google-blue);
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 24px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .calc-title {
+                font-size: 18px;
+            }
+
+            .result-value {
+                font-size: 28px;
+            }
+        }
+
+        strong {
+            font-weight: 500;
+            color: var(--google-gray-900);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>일용근로 계산기</h1>
+        <p class="subtitle">소득세, 보험료, 근무시간 계산</p>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            <!-- 1. 일용근로 급여 계산기 (통합) -->
+            <div class="calc-card full-width">
+                <h2 class="calc-title">일용근로 급여 계산기</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div class="input-group">
+                        <label>일당 (원)</label>
+                        <input type="number" id="dailyWage" placeholder="예: 150000" value="">
+                        <p class="helper-text">하루 기준 급여</p>
+                    </div>
+                    <div class="input-group">
+                        <label>보수지급 기초일수 (일)</label>
+                        <input type="number" id="workDays" placeholder="예: 20" value="" min="1">
+                        <p class="helper-text">근무한 총 일수</p>
+                    </div>
+                    <div class="input-group">
+                        <label>업종 (산재보험율)</label>
+                        <select id="industryType">
+                            <option value="0.007">일반업종 (0.7%)</option>
+                            <option value="0.014">건설업 (1.4%)</option>
+                            <option value="0.021">위험업종 (2.1%)</option>
+                        </select>
+                        <p class="helper-text">사업주 부담</p>
+                    </div>
+                </div>
+                <button class="calc-btn" onclick="calculateAll()">계산하기</button>
+                
+                <div id="allResult" class="result-box" style="display: none;">
+                    <div class="result-title">최종 실수령액</div>
+                    <div class="result-value" id="finalNetPay">-</div>
+                    <div class="result-detail" id="allDetail"></div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-title">공제 항목 안내 (2024년 기준)</div>
+                    <ul>
+                        <li><strong>소득세:</strong> 일 15만원 초과분에 대해 6% 부과</li>
+                        <li><strong>지방소득세:</strong> 소득세의 10%</li>
+                        <li><strong>고용보험:</strong> 일당의 0.9% (근로자 부담)</li>
+                        <li><strong>산재보험:</strong> 사업주 전액 부담 (근로자 공제 없음)</li>
+                        <li><strong>건강보험/국민연금:</strong> 일용직은 제외</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 2. 근무시간 계산기 (기본) -->
+            <div class="calc-card">
+                <h2 class="calc-title">근무시간 계산기 (기본)</h2>
+                <div style="display: grid; gap: 15px;">
+                    <div class="input-group">
+                        <label>날짜</label>
+                        <input type="date" id="workDate1" value="">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="input-group">
+                            <label>시작 시간</label>
+                            <input type="time" id="startTime1" value="">
+                        </div>
+                        <div class="input-group">
+                            <label>종료 시간</label>
+                            <input type="time" id="endTime1" value="">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>휴게 시간 (분)</label>
+                        <input type="number" id="breakTime1" placeholder="예: 60" value="60">
+                    </div>
+                </div>
+                <button class="calc-btn" onclick="calculateBasicWorkHours()">계산하기</button>
+                
+                <div id="timeResult1" class="result-box" style="display: none;">
+                    <div class="result-title">총 근무시간</div>
+                    <div class="result-value" id="totalHours1">-</div>
+                    <div class="result-detail" id="timeDetail1"></div>
+                </div>
+            </div>
+
+            <!-- 3. 급여 계산기 (직종별) -->
+            <div class="calc-card">
+                <h2 class="calc-title">급여 계산기 (직종별)</h2>
+                <div style="display: grid; gap: 15px;">
+                    <div class="input-group">
+                        <label>직종</label>
+                        <select id="jobType">
+                            <option value="7.5">학교 근무자 (7시간 30분)</option>
+                            <option value="8">8시간 근무자</option>
+                            <option value="5">5시간 근무자</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>통상시급 (원)</label>
+                        <input type="number" id="hourlyRate" placeholder="예: 10000" value="">
+                    </div>
+                    <div class="input-group">
+                        <label>날짜</label>
+                        <input type="date" id="workDate2" value="">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="input-group">
+                            <label>시작 시간</label>
+                            <input type="time" id="startTime2" value="">
+                        </div>
+                        <div class="input-group">
+                            <label>종료 시간</label>
+                            <input type="time" id="endTime2" value="">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>휴게 시간 (분)</label>
+                        <input type="number" id="breakTime2" placeholder="예: 60" value="60">
+                    </div>
+                </div>
+                <button class="calc-btn" onclick="calculateSalaryByJob()">계산하기</button>
+                
+                <div id="salaryResult" class="result-box" style="display: none;">
+                    <div class="result-title">총 급여</div>
+                    <div class="result-value" id="totalSalary">-</div>
+                    <div class="result-detail" id="salaryDetail"></div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-title">학교 근무자 (7.5시간) 특별 규정</div>
+                    <ul>
+                        <li><strong>기준 근무:</strong> 08:30-16:30 (휴게 30분)</li>
+                        <li><strong>출근 전:</strong> 08:00 이전 150%, 08:00-08:30 100%</li>
+                        <li><strong>퇴근 후:</strong> 16:30-17:00 무급, 17:00-17:30 100%, 17:30 이후 150%</li>
+                        <li><strong>야간:</strong> 22:00-06:00 200% (연장150%+야간50%)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box" style="margin-top: 30px;">
+            <div class="info-title">근무시간 기준</div>
+            <ul>
+                <li>법정 근로시간: 1일 8시간, 주 40시간</li>
+                <li>연장근로: 기준 시간 초과분 (50% 가산)</li>
+                <li>야간근로: 22:00~06:00 (50% 가산)</li>
+                <li>휴일근로: 8시간까지 50%, 초과 100% 가산</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('workDate1').valueAsDate = new Date();
+        document.getElementById('workDate2').valueAsDate = new Date();
+
+        function calculateAll() {
+            const dailyWage = parseFloat(document.getElementById('dailyWage').value);
+            const workDays = parseFloat(document.getElementById('workDays').value);
+            const resultBox = document.getElementById('allResult');
+            const netPayEl = document.getElementById('finalNetPay');
+            const detailEl = document.getElementById('allDetail');
+
+            if (!dailyWage || dailyWage <= 0) {
+                alert('일당을 입력해주세요');
+                return;
+            }
+
+            if (!workDays || workDays <= 0) {
+                alert('보수지급 기초일수를 입력해주세요');
+                return;
+            }
+
+            const totalWage = dailyWage * workDays;
+            const taxFreeLimit = 150000;
+            let taxableAmount = 0;
+            let incomeTax = 0;
+            let localTax = 0;
+
+            if (dailyWage > taxFreeLimit) {
+                const dailyTaxableAmount = dailyWage - taxFreeLimit;
+                taxableAmount = dailyTaxableAmount * workDays;
+                incomeTax = Math.floor(taxableAmount * 0.06);
+                localTax = Math.floor(incomeTax * 0.1);
+            }
+
+            const employmentInsurance = Math.floor(totalWage * 0.009);
+            const totalDeduction = incomeTax + localTax + employmentInsurance;
+            const netPay = totalWage - totalDeduction;
+
+            netPayEl.textContent = netPay.toLocaleString() + '원';
+            detailEl.innerHTML = `
+                <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--google-gray-200);">
+                    <div style="font-size: 12px; color: var(--google-gray-700); margin-bottom: 10px; text-transform: uppercase;">급여 내역</div>
+                    <div class="result-detail-item">
+                        <span class="result-detail-label">일당</span>
+                        <span class="result-detail-value">${dailyWage.toLocaleString()}원</span>
+                    </div>
+                    <div class="result-detail-item">
+                        <span class="result-detail-label">보수지급 기초일수</span>
+                        <span class="result-detail-value">${workDays}일</span>
+                    </div>
+                    <div class="result-detail-item">
+                        <span class="result-detail-label" style="font-weight: 700; color: var(--google-blue);">총보수액 (일당 × 일수)</span>
+                        <span class="result-detail-value" style="font-weight: 700; color: var(--google-blue);">${totalWage.toLocaleString()}원</span>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--google-gray-200);">
+                    <div style="font-size: 12px; color: var(--google-gray-700); margin-bottom: 10px; text-transform: uppercase;">소득세</div>
+                    <div class="result-detail-item">
+                        <span class="result-detail-label">일당 비과세 한도</span>
+                        <span class="result-detail-value">${taxFreeLimit.toLocaleString()}원</span>
+                    </div>
+                    <div class="result-detail-item">
+                        <span class="result-detail-label">총 과세 대상액 (× ${workDays}일)</span>
+                        <span class="result-detail-value">${taxableAmount.toLocaleString()}원</span>
+                    </div>
+                    <div class="result-detail-item">
+                        <span class="result-detail-label">소득세 (6%)</span>
+                        <span class="result-detail-value" style="color: var(--google-red);">-${incomeTax.toLocaleString()}원</span>
+                    </div>
+                    <div class="result-detail-item">
+                        <span class="result-detail-label">지방소득세 (10%)</span>
+                        <span class="result-detail-value" style="color: var(--google-red);">-${localTax.toLocaleString()}원</span>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--google-gray-200);">
+                    <div style="font-size: 12px; color: var(--google-gray-700); margin-bottom: 10px; text-transform: uppercase;">4대보험</div>
+                    <div class="result-detail-item">
+                        <span class="result-detail-label">고용보험 (총보수액의 0.9%)</span>
+                        <span class="result-detail-value" style="color: var(--google-red);">-${employmentInsurance.toLocaleString()}원</span>
+                    </div>
+                    <div class="result-detail-item">
+                        <span class="result-detail-label">산재보험</span>
+                        <span class="result-detail-value" style="color: var(--google-green);">사업주 부담</span>
+                    </div>
+                </div>
+
+                <div style="background: var(--google-blue-light); padding: 15px; border-radius: var(--border-radius); margin-top: 15px;">
+                    <div class="result-detail-item" style="border: none;">
+                        <span class="result-detail-label" style="font-size: 14px; font-weight: 500;">총 공제액</span>
+                        <span class="result-detail-value" style="color: var(--google-red); font-size: 16px;">-${totalDeduction.toLocaleString()}원</span>
+                    </div>
+                    <div class="result-detail-item" style="border: none; margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--google-blue);">
+                        <span class="result-detail-label" style="font-size: 16px; color: var(--google-blue); font-weight: 500;">실수령액</span>
+                        <span class="result-detail-value" style="font-size: 20px; color: var(--google-blue); font-weight: 500;">${netPay.toLocaleString()}원</span>
+                    </div>
+                </div>
+            `;
+
+            resultBox.style.display = 'block';
+        }
+
+        function calculateBasicWorkHours() {
+            const date = document.getElementById('workDate1').value;
+            const startTime = document.getElementById('startTime1').value;
+            const endTime = document.getElementById('endTime1').value;
+            const breakMinutes = parseFloat(document.getElementById('breakTime1').value) || 0;
+            
+            const resultBox = document.getElementById('timeResult1');
+            const totalHoursEl = document.getElementById('totalHours1');
+            const detailEl = document.getElementById('timeDetail1');
+
+            if (!date || !startTime || !endTime) {
+                alert('날짜와 시간을 모두 입력해주세요');
+                return;
+            }
+
+            const start = new Date(`${date}T${startTime}`);
+            let end = new Date(`${date}T${endTime}`);
+
+            if (end <= start) {
+                end.setDate(end.getDate() + 1);
+            }
+
+            const diffMs = end - start;
+            const totalMinutes = Math.floor(diffMs / 1000 / 60);
+            const workMinutes = totalMinutes - breakMinutes;
+            const workHours = Math.floor(workMinutes / 60);
+            const workMins = workMinutes % 60;
+
+            totalHoursEl.textContent = `${workHours}시간 ${workMins}분`;
+            detailEl.innerHTML = `
+                <div class="result-detail-item">
+                    <span class="result-detail-label">근무 날짜</span>
+                    <span class="result-detail-value">${date}</span>
+                </div>
+                <div class="result-detail-item">
+                    <span class="result-detail-label">시작 시간</span>
+                    <span class="result-detail-value">${startTime}</span>
+                </div>
+                <div class="result-detail-item">
+                    <span class="result-detail-label">종료 시간</span>
+                    <span class="result-detail-value">${endTime}${end.getDate() !== start.getDate() ? ' (익일)' : ''}</span>
+                </div>
+                <div class="result-detail-item">
+                    <span class="result-detail-label">총 시간 (휴게 포함)</span>
+                    <span class="result-detail-value">${Math.floor(totalMinutes / 60)}시간 ${totalMinutes % 60}분</span>
+                </div>
+                <div class="result-detail-item">
+                    <span class="result-detail-label">휴게 시간</span>
+                    <span class="result-detail-value">${breakMinutes}분</span>
+                </div>
+                <div class="result-detail-item" style="background: var(--google-blue-light); padding: 12px; margin-top: 10px; border-radius: var(--border-radius); border: none;">
+                    <span class="result-detail-label" style="font-size: 14px; color: var(--google-blue); font-weight: 500;">총 실근무 시간</span>
+                    <span class="result-detail-value" style="font-size: 16px; color: var(--google-blue); font-weight: 500;">${workHours}시간 ${workMins}분</span>
+                </div>
+            `;
+
+            resultBox.style.display = 'block';
+        }
+
+        function calculateSalaryByJob() {
+            const jobType = parseFloat(document.getElementById('jobType').value);
+            const hourlyRate = parseFloat(document.getElementById('hourlyRate').value);
+            const date = document.getElementById('workDate2').value;
+            const startTime = document.getElementById('startTime2').value;
+            const endTime = document.getElementById('endTime2').value;
+            const breakMinutes = parseFloat(document.getElementById('breakTime2').value) || 0;
+            
+            const resultBox = document.getElementById('salaryResult');
+            const totalSalaryEl = document.getElementById('totalSalary');
+            const detailEl = document.getElementById('salaryDetail');
+
+            if (!hourlyRate || hourlyRate <= 0) {
+                alert('통상시급을 입력해주세요');
+                return;
+            }
+
+            if (!date || !startTime || !endTime) {
+                alert('날짜와 시간을 모두 입력해주세요');
+                return;
+            }
+
+            const start = new Date(`${date}T${startTime}`);
+            let end = new Date(`${date}T${endTime}`);
+
+            if (end <= start) {
+                end.setDate(end.getDate() + 1);
+            }
+
+            let regularPay = 0;
+            let overtimePay = 0;
+            let nightPay = 0;
+            let detailText = '';
+
+            const nightStart = new Date(`${date}T22:00`);
+            const nightEnd = new Date(date);
+            nightEnd.setDate(nightEnd.getDate() + 1);
+            nightEnd.setHours(6, 0, 0, 0);
+
+            if (jobType === 7.5) {
+                const workStart = new Date(`${date}T08:30`);
+                const workEnd = new Date(`${date}T16:30`);
+
+                let before8MinutesAt150 = 0;
+                let before8MinutesAt100 = 0;
+                let regularMinutes = 0;
+                let afterWorkUnpaid = 0;
+                let afterWorkAt100 = 0;
+                let afterWorkAt150 = 0;
+                let nightMinutesAt200 = 0;
+
+                if (start < workStart) {
+                    const beforeStart8am = new Date(`${date}T08:00`);
+                    
+                    if (start < beforeStart8am) {
+                        before8MinutesAt100 = 30;
+                        const before8Time = Math.floor((beforeStart8am - start) / 60000);
+                        before8MinutesAt150 = before8Time;
+                    } else {
+                        before8MinutesAt100 = Math.floor((workStart - start) / 60000);
+                    }
+                }
+
+                const actualWorkStart = start < workStart ? workStart : start;
+                const actualWorkEnd = end > workEnd ? workEnd : end;
+                
+                if (actualWorkEnd > actualWorkStart) {
+                    const totalRegularMinutes = Math.floor((actualWorkEnd - actualWorkStart) / 60000);
+                    regularMinutes = Math.min(totalRegularMinutes, 450);
+                }
+
+                if (end > workEnd) {
+                    const time1700 = new Date(`${date}T17:00`);
+                    const time1730 = new Date(`${date}T17:30`);
+                    
+                    if (end.getDate() !== new Date(date).getDate()) {
+                        time1700.setDate(time1700.getDate() + 1);
+                        time1730.setDate(time1730.getDate() + 1);
+                    }
+
+                    afterWorkUnpaid = Math.min(30, Math.floor((end - workEnd) / 60000));
+                    
+                    if (end > time1700) {
+                        afterWorkAt100 = Math.min(30, Math.floor((end - time1700) / 60000));
+                    }
+                    
+                    if (end > time1730) {
+                        const endBeforeNight = end < nightStart ? end : nightStart;
+                        if (endBeforeNight > time1730) {
+                            afterWorkAt150 = Math.floor((endBeforeNight - time1730) / 60000);
+                        }
+                    }
+                    
+                    if (end > nightStart) {
+                        const nightEndTime = end < nightEnd ? end : nightEnd;
+                        nightMinutesAt200 = Math.floor((nightEndTime - nightStart) / 60000);
+                    }
+                }
+
+                regularMinutes = Math.max(0, regularMinutes - breakMinutes);
+
+                regularPay = (regularMinutes / 60) * hourlyRate;
+                
+                overtimePay = 
+                    (before8MinutesAt150 / 60) * hourlyRate * 1.5 +
+                    (before8MinutesAt100 / 60) * hourlyRate * 1.0 +
+                    (afterWorkAt100 / 60) * hourlyRate * 1.0 +
+                    (afterWorkAt150 / 60) * hourlyRate * 1.5;
+                
+                nightPay = (nightMinutesAt200 / 60) * hourlyRate * 2.0;
+
+                detailText = `
+                    <div style="margin: 15px 0; padding: 12px; background: var(--google-gray-50); border-radius: var(--border-radius);">
+                        <div style="font-size: 12px; color: var(--google-gray-700); margin-bottom: 10px; text-transform: uppercase;">시간별 상세 (기준: 08:30-16:30)</div>
+                        ${before8MinutesAt150 > 0 ? `
+                        <div class="result-detail-item">
+                            <span class="result-detail-label">출근 전 초과 (08:00 이전)</span>
+                            <span class="result-detail-value">${before8MinutesAt150}분 × 150%</span>
+                        </div>
+                        ` : ''}
+                        ${before8MinutesAt100 > 0 ? `
+                        <div class="result-detail-item">
+                            <span class="result-detail-label">출근 전 (08:00-08:30)</span>
+                            <span class="result-detail-value">${before8MinutesAt100}분 × 100%</span>
+                        </div>
+                        ` : ''}
+                        <div class="result-detail-item">
+                            <span class="result-detail-label">정규 근무 (7.5시간)</span>
+                            <span class="result-detail-value">${(regularMinutes / 60).toFixed(2)}시간 × 100%</span>
+                        </div>
+                        ${afterWorkUnpaid > 0 ? `
+                        <div class="result-detail-item">
+                            <span class="result-detail-label" style="color: var(--google-red);">퇴근 후 (16:30-17:00)</span>
+                            <span class="result-detail-value" style="color: var(--google-red);">${afterWorkUnpaid}분 무급</span>
+                        </div>
+                        ` : ''}
+                        ${afterWorkAt100 > 0 ? `
+                        <div class="result-detail-item">
+                            <span class="result-detail-label">퇴근 후 (17:00-17:30)</span>
+                            <span class="result-detail-value">${afterWorkAt100}분 × 100%</span>
+                        </div>
+                        ` : ''}
+                        ${afterWorkAt150 > 0 ? `
+                        <div class="result-detail-item">
+                            <span class="result-detail-label">퇴근 후 (17:30-22:00)</span>
+                            <span class="result-detail-value">${afterWorkAt150}분 × 150%</span>
+                        </div>
+                        ` : ''}
+                        ${nightMinutesAt200 > 0 ? `
+                        <div class="result-detail-item">
+                            <span class="result-detail-label" style="color: #9334e9;">야간 (22:00-06:00)</span>
+                            <span class="result-detail-value" style="color: #9334e9;">${nightMinutesAt200}분 × 200%</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            } else {
+                const totalMinutes = Math.floor((end - start) / 60000);
+                const workMinutes = totalMinutes - breakMinutes;
+                
+                let daytimeMinutes = 0;
+                let nightMinutes = 0;
+                
+                let currentTime = new Date(start);
+                let remainingMinutes = workMinutes;
+                
+                while (remainingMinutes > 0 && currentTime < end) {
+                    const currentHour = currentTime.getHours();
+                    const isNightTime = currentHour >= 22 || currentHour < 6;
+                    
+                    if (isNightTime) {
+                        let nightEndTime;
+                        if (currentHour >= 22) {
+                            nightEndTime = new Date(currentTime);
+                            nightEndTime.setDate(nightEndTime.getDate() + 1);
+                            nightEndTime.setHours(6, 0, 0, 0);
+                        } else {
+                            nightEndTime = new Date(currentTime);
+                            nightEndTime.setHours(6, 0, 0, 0);
+                        }
+                        
+                        const nightPeriodEnd = end < nightEndTime ? end : nightEndTime;
+                        const nightPeriodMinutes = Math.floor((nightPeriodEnd - currentTime) / 60000);
+                        const minutesToAdd = Math.min(nightPeriodMinutes, remainingMinutes);
+                        
+                        nightMinutes += minutesToAdd;
+                        remainingMinutes -= minutesToAdd;
+                        currentTime = new Date(currentTime.getTime() + minutesToAdd * 60000);
+                    } else {
+                        const daytimeEndTime = new Date(currentTime);
+                        daytimeEndTime.setHours(22, 0, 0, 0);
+                        
+                        const daytimePeriodEnd = end < daytimeEndTime ? end : daytimeEndTime;
+                        const daytimePeriodMinutes = Math.floor((daytimePeriodEnd - currentTime) / 60000);
+                        const minutesToAdd = Math.min(daytimePeriodMinutes, remainingMinutes);
+                        
+                        daytimeMinutes += minutesToAdd;
+                        remainingMinutes -= minutesToAdd;
+                        currentTime = new Date(currentTime.getTime() + minutesToAdd * 60000);
+                    }
+                }
+                
+                regularPay = 0;
+                overtimePay = (daytimeMinutes / 60) * hourlyRate * 1.5;
+                nightPay = (nightMinutes / 60) * hourlyRate * 2.0;
+
+                detailText = `
+                    <div style="margin: 15px 0; padding: 12px; background: var(--google-gray-50); border-radius: var(--border-radius);">
+                        <div style="font-size: 12px; color: var(--google-gray-700); margin-bottom: 10px; text-transform: uppercase;">시간별 상세 (${jobType}시간 근무자)</div>
+                        <div class="result-detail-item">
+                            <span class="result-detail-label">총 근무시간 (휴게 제외)</span>
+                            <span class="result-detail-value">${Math.floor(workMinutes / 60)}시간 ${workMinutes % 60}분</span>
+                        </div>
+                        ${daytimeMinutes > 0 ? `
+                        <div class="result-detail-item">
+                            <span class="result-detail-label">일반 시간 (06:00-22:00)</span>
+                            <span class="result-detail-value">${Math.floor(daytimeMinutes / 60)}시간 ${daytimeMinutes % 60}분 × 150%</span>
+                        </div>
+                        ` : ''}
+                        ${nightMinutes > 0 ? `
+                        <div class="result-detail-item">
+                            <span class="result-detail-label" style="color: #9334e9;">야간 시간 (22:00-06:00)</span>
+                            <span class="result-detail-value" style="color: #9334e9;">${Math.floor(nightMinutes / 60)}시간 ${nightMinutes % 60}분 × 200%</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            const totalSalary = regularPay + overtimePay + nightPay;
+
+            totalSalaryEl.textContent = Math.floor(totalSalary).toLocaleString() + '원';
+            detailEl.innerHTML = `
+                <div class="result-detail-item">
+                    <span class="result-detail-label">통상시급</span>
+                    <span class="result-detail-value">${hourlyRate.toLocaleString()}원</span>
+                </div>
+                <div class="result-detail-item">
+                    <span class="result-detail-label">근무 시간</span>
+                    <span class="result-detail-value">${startTime} ~ ${endTime}${end.getDate() !== start.getDate() ? ' (익일)' : ''}</span>
+                </div>
+                ${detailText}
+                <div style="background: var(--google-blue-light); padding: 15px; border-radius: var(--border-radius); margin-top: 15px;">
+                    ${regularPay > 0 ? `
+                    <div class="result-detail-item" style="border: none;">
+                        <span class="result-detail-label">기본 급여 (100%)</span>
+                        <span class="result-detail-value">${Math.floor(regularPay).toLocaleString()}원</span>
+                    </div>
+                    ` : ''}
+                    ${overtimePay > 0 ? `
+                    <div class="result-detail-item" style="border: none;">
+                        <span class="result-detail-label">일반 시간 수당 (150%)</span>
+                        <span class="result-detail-value">${Math.floor(overtimePay).toLocaleString()}원</span>
+                    </div>
+                    ` : ''}
+                    ${nightPay > 0 ? `
+                    <div class="result-detail-item" style="border: none;">
+                        <span class="result-detail-label" style="color: #9334e9;">야간 시간 수당 (200%)</span>
+                        <span class="result-detail-value" style="color: #9334e9;">${Math.floor(nightPay).toLocaleString()}원</span>
+                    </div>
+                    ` : ''}
+                    <div class="result-detail-item" style="border: none; margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--google-blue);">
+                        <span class="result-detail-label" style="font-size: 16px; color: var(--google-blue); font-weight: 500;">총 급여</span>
+                        <span class="result-detail-value" style="font-size: 20px; color: var(--google-blue); font-weight: 500;">${Math.floor(totalSalary).toLocaleString()}원</span>
+                    </div>
+                </div>
+            `;
+
+            resultBox.style.display = 'block';
+        }
+
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const activeElement = document.activeElement;
+                
+                if (activeElement.id === 'dailyWage' || activeElement.id === 'workDays' || activeElement.id === 'industryType') {
+                    calculateAll();
+                } else if (activeElement.id === 'workDate1' || activeElement.id === 'startTime1' || 
+                           activeElement.id === 'endTime1' || activeElement.id === 'breakTime1') {
+                    calculateBasicWorkHours();
+                } else if (activeElement.id === 'hourlyRate' || activeElement.id === 'workDate2' || 
+                           activeElement.id === 'startTime2' || activeElement.id === 'endTime2' || activeElement.id === 'breakTime2') {
+                    calculateSalaryByJob();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
